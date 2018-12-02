@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { createScopedReducer } from './'
+import { createScopedReducer } from '../src'
 
 describe('createScopedReducer', () => {
   const INC = 'inc'
