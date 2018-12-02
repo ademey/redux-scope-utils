@@ -19,9 +19,13 @@ export const getStateSlice = (state, key) => {
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const createScopedAction = (actionCreator, scope) => (...args) =>
-  actionCreator(...args, scope)
-
+export const createScopedAction = (actionCreator, scope) => {
+  const { type } = actionCreator()
+  return (...args) => ({
+    ...actionCreator(...args),
+    meta: { ...actionCreator(...args).meta, scope }
+  })
+}
 /**
  * Create a selector with a predefined scope. This allows generic selectors
  * to be created for a specific part of state.
@@ -33,9 +37,9 @@ export const createScopedSelector = (selector, scope) => (state, props) =>
   selector(getStateSlice(state, scope), props)
 
 /**
- * A helper to manage scoped actions.  This utility acts as a gatekeeper.
+ * A helper to manage scoped actions. This utility acts as a gatekeeper.
  * The reducer will only be invoked if the scope matches or when the reducer
- * is initialized with an undefined state.  The second case allows the
+ * is initialized with an undefined state. The second case allows the
  * initialState to be applied.
  *
  * @param {function} reducer - Reducer function to scope
