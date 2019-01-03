@@ -1,12 +1,12 @@
 /**
- * Utility to grab a slice of the state based on the instanceId (key)
+ * Utility to grab a slice of the state based on the scope
  *
  * @param {object} state - A branch of a state object
- * @param {string} key   - A key pointing to a part of state
+ * @param {string} scope  - A key pointing to a part of state
  * @return {object} - the slice of state
  */
-export const getStateSlice = (state, key) => {
-  const path = key.indexOf('/') === -1 ? [key] : key.split('/')
+export const getStateSlice = (state, scope) => {
+  const path = scope.indexOf('/') === -1 ? [scope] : scope.split('/')
   return path.reduce((value, pathSegment) => value[pathSegment], state)
 }
 
@@ -26,6 +26,7 @@ export const createScopedAction = (actionCreator, scope) => {
     meta: { ...actionCreator(...args).meta, scope }
   })
 }
+
 /**
  * Create a selector with a predefined scope. This allows generic selectors
  * to be created for a specific part of state.
