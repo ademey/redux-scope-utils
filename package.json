@@ -2,10 +2,11 @@
   "name": "redux-scope-utils",
   "version": "1.0.0",
   "description": "Utilities for Redux scope patterns",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "author": "Anne Demey",
   "license": "MIT",
   "scripts": {
+    "build": "babel src -s -D -d dist --presets env",
     "test": "jest --verbose",
     "test:watch": "jest --watch",
     "prettier": "prettier --write \"{lib, src, scripts, bin}/**/*.js\""

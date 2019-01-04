@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { createScopedSelector } from './'
+import { createScopedSelector } from '../src'
 
 describe('createScopedSelector', () => {
   const getDate = state => state.date

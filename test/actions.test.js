@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { createScopedAction } from './'
+import { createScopedAction } from '../src'
 
 describe('createScopedAction', () => {
   it('Creates an action creator with a scope', () => {
