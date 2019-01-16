@@ -7,14 +7,14 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 /**
- * Utility to grab a slice of the state based on the instanceId (key)
+ * Utility to grab a slice of the state based on the scope
  *
  * @param {object} state - A branch of a state object
- * @param {string} key   - A key pointing to a part of state
+ * @param {string} scope  - A key pointing to a part of state
  * @return {object} - the slice of state
  */
-var getStateSlice = exports.getStateSlice = function getStateSlice(state, key) {
-  var path = key.indexOf('/') === -1 ? [key] : key.split('/');
+var getStateSlice = exports.getStateSlice = function getStateSlice(state, scope) {
+  var path = scope.indexOf('/') === -1 ? [scope] : scope.split('/');
   return path.reduce(function (value, pathSegment) {
     return value[pathSegment];
   }, state);
@@ -39,6 +39,7 @@ var createScopedAction = exports.createScopedAction = function createScopedActio
     });
   };
 };
+
 /**
  * Create a selector with a predefined scope. This allows generic selectors
  * to be created for a specific part of state.
