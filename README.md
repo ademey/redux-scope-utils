@@ -28,17 +28,16 @@ const counter = (state = 0, action) => {
 
 The `counter` reducer's initial state is just `0`. It can handle `INCREMENT` and `DECREMENT` actions to change the state by one. Use `combineReducers` to add 2 instances of the `counter` reducer:
 
-```js
-const rootReducer = combineReducers({ likes: counter, followers: counter })
-// Produces an initial state:
-// { likes: 0,  followers: 0 }
-```
-
 ### The Problem
 
 When we dispatch an action we can see a problem with this design. Both reducers will increment since they both handle the `INCREMENT` action type.
 
 ```js
+const rootReducer = combineReducers({ likes: counter, followers: counter })
+// Produces an initial state:
+// { likes: 0,  followers: 0 }
+// ...
+
 store.dispatch({ type: 'INCREMENT' })
 // Produces a new state:
 // { likes: 1, followers: 1 }
@@ -46,11 +45,11 @@ store.dispatch({ type: 'INCREMENT' })
 
 How would you approach this problem? Write separate `likes` and `followers` reducers, each handling their own action types (`INCREMENT_LIKES`, `INCREMENT_FOLLOWERS`, ...)?
 
-The goal of this library is reducer reuse and we will use "scoped" reducers to do so. A scoped reducer will handle a generic action type like `INCREMENT`, but only if the action has the proper `scope` property.
-
 ## Scoped Reducers
 
-When an action is dispatched, the store's rootReducer (better name?) will be called with the current state and the dispatched action. The example rootReducer is created with `combineReducers`, which will call each child reducer with (relative?) state and the action.
+The goal of this library is store logic reuse and we will use "scoped" reducers to do so. A scoped reducer will handle a generic action type like `INCREMENT`, but only if the action has the proper `scope` property.
+
+When an action is dispatched, the store's "rootReducer" will be called with the current state and the dispatched action. The example "rootReducer" is created with `combineReducers`, which will call each child reducer with the state and the action.
 
 The `createScopedReducer(reducer, scope)` function from this library will act as a gateway to our `counter` reducers. The `counter` reducer will only be called if a matching `scope` is included with the action.
 
@@ -76,7 +75,7 @@ store.dispatch({ type: 'INCREMENT', meta: { scope: 'likes' } })
 
 ## Scoped Actions
 
-Lets refactor our counter so it has [action creators](https://redux.js.org/basics/actions#action-creators) (functions which return actions).
+Lets refactor our counter so it has [action creators](https://redux.js.org/basics/actions#action-creators) (functions which return action objects).
 
 ```js
 const INCREMENT = 'INCREMENT'
