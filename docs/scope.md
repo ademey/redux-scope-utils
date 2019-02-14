@@ -3,7 +3,7 @@
 Scope is a *string* which namespaces reducers, action creators and selectors to a specific slice of state. The `scope` should be wrote as a `/` separated path to the reducer in the state tree.
 
 Here a reducer is being used multiple times because it has unique scopes. When an form action
-is dispatched `formReducer` will only handle it if the `scope` matches.
+is dispatched, `formReducer` will only handle it if the `scope` matches.
 
 ```js
 import { combineReducers } from 'redux';
@@ -23,6 +23,8 @@ const rootReducer = combineReducers({
 });
 
 ```
+
+
 ## Coordination
 
 All the functions in this library work in conjunction around the `scope`. 

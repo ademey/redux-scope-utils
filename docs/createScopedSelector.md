@@ -5,8 +5,7 @@ Creates a new [selector](https://github.com/reduxjs/reselect#motivation-for-memo
 ## Arguments
 
 1. `selector` (*Function*): A function to retrieve a part of state, relative to it's reducer.
-*
-2. `scope` (*String*): See *scope* documentation
+2. `scope` (*String*): Path to the reducer. See *scope* documentation
 
 
 ## Returns

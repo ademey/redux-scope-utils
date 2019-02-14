@@ -4,7 +4,22 @@
 
 Utilities for Redux scope patterns
 
-Redux Scope Utils is a set of functions to promote reusability of Actions, Reducers and Selectors. These functions can be reused across an application by applying only to a specific `scope`.
+Redux Scope Utils is a set of functions to promote reusability of *actions*, *reducers* and *selectors* in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific `scope`. 
+
+~~Each function takes a `scope` value, which is the path to it's reducer. ~~
+
+### `createScopedReducer(reducer, scope)`
+
+Only actions with a matching `scope` will be passed to the reducer.
+
+### `createScopedAction(actionCreator, scope)`
+
+Adds `scope` to an action so that it can pass the scoped reducer's test.
+
+### `createScopedSelector(selector, scope)`
+
+Uses `scope` to traverse the state tree. The `selector` should be relative to a the reducer.
+
 
 
 ## Scopes

@@ -1,11 +1,12 @@
 # createScopedAction(actionCreator, scope)
 
-Creates a new [action creator](https://redux.js.org/glossary#action-creator) with `scope` in it's `meta` property.
+Creates a new [action creator](https://redux.js.org/glossary#action-creator) which can be used with a scoped reducer. 
+
+~~It adds  `scope` in it's `meta` property, which the scoped reducer looks for. ~~
 
 ## Arguments
 
 1. `actionCreator` (*Function*): A [action creator](https://redux.js.org/glossary#action-creator) function to apply a scope.
-*
 2. `scope` (*String*): See *scope* documentation
 
 
@@ -44,7 +45,7 @@ setFormValue('myKey', 'someValue')
   payload: {
     key: 'myKey', value: 'someValue'
   },
-  meta: { scope: 'myForm' }
+  meta: { scope: 'myForm' }  
 }
 */
 
