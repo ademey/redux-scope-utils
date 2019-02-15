@@ -10,7 +10,7 @@ Creates a new [selector](https://github.com/reduxjs/reselect#motivation-for-memo
 
 ## Returns
 
-(*Function*): A new selector which ???
+(*Function*): A new selector which accepts the root application state and returns the scoped data.
 
 ## Example
 
@@ -19,7 +19,7 @@ This example will create a `modalReducer` which can track if a modal is open, an
 TODO: semis
 
 ```js
-// modalReduer.js
+// modalReducer.js
 
 const initialState = {
   open: false,

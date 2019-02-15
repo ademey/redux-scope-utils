@@ -6,7 +6,8 @@ Utilities for Redux scope patterns
 
 Redux Scope Utils is a set of functions to promote reusability of *actions*, *reducers* and *selectors* in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific `scope`. 
 
-~~Each function takes a `scope` value, which is the path to it's reducer. ~~
+[todo: Link to MD]
+[todo: Why meta]
 
 ### `createScopedReducer(reducer, scope)`
 
@@ -21,25 +22,24 @@ Adds `scope` to an action so that it can pass the scoped reducer's test.
 Uses `scope` to traverse the state tree. The `selector` should be relative to a the reducer.
 
 
-
-## Scopes
+## In Depth
 
 While there are many ways to write reducers, this library assumes your state will
 be constructed by using [combineReducers](https://redux.js.org/api/combinereducers) from the redux package. The `combineReducers` function can be used to create deeply nested application states (objects containing objects). At the end of this tree will be a final reducer, and it's path is the `scope`.
  
  ```js
+ /* The `/` separated path to the reducer is the `scope`
  {
    menu: {
-     order: 
+     order: createScopedReducer(menuReducer, 'menu/order/') 
    }
  }
  ```
 
-
 To explain the concept of a `scope` we need to build an application state with multiple of the same reducers. Lets start with a simple reducer based off the [counter example](https://redux.js.org/introduction/getting-started#basic-example) from the Redux docs:
 
 ```js
-const counter = (state = 0, action) => {
+const counterReducer = (state = 0, action) => {
   switch (action.type) {
     case 'INCREMENT':
       return state + 1
@@ -51,14 +51,17 @@ const counter = (state = 0, action) => {
 }
 ```
 
-The `counter` reducer's initial state is just `0`. It can handle `INCREMENT` and `DECREMENT` actions to change the state by one. Use `combineReducers` to add 2 instances of the `counter` reducer:
+The `counterReducer`'s initial state is just `0`. It can handle `INCREMENT` and `DECREMENT` actions to change the state by one. 
 
 ### The Problem
 
-When we dispatch an action we can see a problem with this design. Both reducers will increment since they both handle the `INCREMENT` action type.
+The next example will use `combineReducers` to add 2 instances of the `counterReducer` reducer. When we dispatch an action we can see a problem with this design. Both reducers will increment since they both handle the `INCREMENT` action type.
 
 ```js
-const rootReducer = combineReducers({ likes: counter, followers: counter })
+const rootReducer = combineReducers({
+  likes: counter,
+  followers: counter
+})
 // Produces an initial state:
 // { likes: 0,  followers: 0 }
 // ...
@@ -72,9 +75,9 @@ How would you approach this problem? Write separate `likes` and `followers` redu
 
 ## Scoped Reducers
 
-The goal of this library is store logic reuse and we will use "scoped" reducers to do so. A scoped reducer will handle a generic action type like `INCREMENT`, but only if the action has the proper `scope` property.
+The goal of this library is redux logic reuse and we will use "scoped" reducers to do so. A scoped reducer will handle a generic action type like `INCREMENT`, but only if the action has the proper `scope` property.
 
-When an action is dispatched, the store's "rootReducer" will be called with the current state and the dispatched action. The example "rootReducer" is created with `combineReducers`, which will call each child reducer with the state and the action.
+When an action is dispatched, the store's `rootReducer` will be called with the current state and the dispatched action. The example `rootReducer` is created with `combineReducers`, which will call each child reducer with the state and the action.
 
 The `createScopedReducer(reducer, scope)` function from this library will act as a gateway to our `counter` reducers. The `counter` reducer will only be called if a matching `scope` is included with the action.
 
@@ -114,7 +117,7 @@ export const incCounter = () => ({ type: INCREMENT })
 // Lower counter value by one
 export const decCounter = () => ({ type: DECREMENT })
 
-export const counter = (state = 0, action) => {
+export const counterReducer = (state = 0, action) => {
   switch (action.type) {
     case INCREMENT:
       return state + 1
@@ -126,10 +129,14 @@ export const counter = (state = 0, action) => {
 }
 ```
 
+Then for each scoped reducer, you can create matching scoped actions creators. When they are called,
+they will contain the `scope` information. 
+
 ```js
+
 import { createScopedAction } from 'redux-scope-utils'
 // Import action creators from your reusable module
-import { incCounter, decCounter } from 'store/modules/counter'
+import { incCounter, decCounter } from 'example/counter'
 
 // Creates a new action creator which includes the `scope` of `likes`
 const upvote = createScopedAction(incCounter, 'likes')
@@ -147,7 +154,10 @@ store.dispatch(upvote())
  */
 ```
 
-## Functions
+## Scoped Selectors
+
+The final part of this is retrieving data from state. To get data from our scoped reducer, we will
+use a scoped selector. 
 
 
 ## References
