@@ -6,9 +6,9 @@
  * @return {object} - the slice of state
  */
 export const getStateSlice = (state, scope) => {
-  const path = scope.indexOf('/') === -1 ? [scope] : scope.split('/')
-  return path.reduce((value, pathSegment) => value[pathSegment], state)
-}
+  const path = scope.indexOf('/') === -1 ? [scope] : scope.split('/');
+  return path.reduce((value, pathSegment) => value[pathSegment], state);
+};
 
 /**
  * Creates an action creator with predefined scope. This allows generic
@@ -20,12 +20,12 @@ export const getStateSlice = (state, scope) => {
  * @return {function} Scoped action creator
  */
 export const createScopedAction = (actionCreator, scope) => {
-  const { type } = actionCreator()
+  const { type } = actionCreator();
   return (...args) => ({
     ...actionCreator(...args),
     meta: { ...actionCreator(...args).meta, scope }
-  })
-}
+  });
+};
 
 /**
  * Create a selector with a predefined scope. This allows generic selectors
@@ -35,7 +35,7 @@ export const createScopedAction = (actionCreator, scope) => {
  * @return {function} Scoped selector
  */
 export const createScopedSelector = (selector, scope) => (state, props) =>
-  selector(getStateSlice(state, scope), props)
+  selector(getStateSlice(state, scope), props);
 
 /**
  * A helper to manage scoped actions. This utility acts as a gatekeeper.
@@ -48,11 +48,8 @@ export const createScopedSelector = (selector, scope) => (state, props) =>
  * @return {function}
  */
 export const createScopedReducer = (reducer, scope) => (state, action) => {
-  if (
-    state === undefined ||
-    (action.meta && action.meta.scope && action.meta.scope.startsWith(scope))
-  ) {
-    return reducer(state, action)
+  if (state === undefined || (action.meta && action.meta.scope === scope)) {
+    return reducer(state, action);
   }
-  return state
-}
+  return state;
+};
