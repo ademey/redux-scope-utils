@@ -3,8 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.createScopedReducer = exports.createScopedSelector = exports.createScopedAction = exports.getStateSlice = exports.typed = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _typed = require('./typed');
+
+var typed = _interopRequireWildcard(_typed);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+exports.typed = typed;
 
 /**
  * Utility to grab a slice of the state based on the scope
@@ -13,6 +22,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
  * @param {string} scope  - A key pointing to a part of state
  * @return {object} - the slice of state
  */
+
 var getStateSlice = exports.getStateSlice = function getStateSlice(state, scope) {
   var path = scope.indexOf('/') === -1 ? [scope] : scope.split('/');
   return path.reduce(function (value, pathSegment) {
@@ -30,9 +40,6 @@ var getStateSlice = exports.getStateSlice = function getStateSlice(state, scope)
  * @return {function} Scoped action creator
  */
 var createScopedAction = exports.createScopedAction = function createScopedAction(actionCreator, scope) {
-  var _actionCreator = actionCreator(),
-      type = _actionCreator.type;
-
   return function () {
     return _extends({}, actionCreator.apply(undefined, arguments), {
       meta: _extends({}, actionCreator.apply(undefined, arguments).meta, { scope: scope })
@@ -65,7 +72,7 @@ var createScopedSelector = exports.createScopedSelector = function createScopedS
  */
 var createScopedReducer = exports.createScopedReducer = function createScopedReducer(reducer, scope) {
   return function (state, action) {
-    if (state === undefined || action.meta && action.meta.scope && action.meta.scope.startsWith(scope)) {
+    if (state === undefined || action.meta && action.meta.scope === scope) {
       return reducer(state, action);
     }
     return state;

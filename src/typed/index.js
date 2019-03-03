@@ -1,5 +1,3 @@
-import * as typed from './typed';
-export { typed };
 
 /**
  * Utility to grab a slice of the state based on the scope
@@ -22,11 +20,13 @@ export const getStateSlice = (state, scope) => {
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const createScopedAction = (actionCreator, scope) =>
-  (...args) => ({
-    ...actionCreator(...args),
-    meta: { ...actionCreator(...args).meta, scope }
-  })
+export const createScopedAction = (actionCreator, scope) => {
+  const { type, ...rest } = actionCreator();
+  return (...args) => ({
+    type: `${type}@${scope}`,
+    ...rest
+  });
+};
 
 /**
  * Create a selector with a predefined scope. This allows generic selectors
@@ -49,8 +49,9 @@ export const createScopedSelector = (selector, scope) => (state, props) =>
  * @return {function}
  */
 export const createScopedReducer = (reducer, scope) => (state, action) => {
-  if (state === undefined || (action.meta && action.meta.scope === scope)) {
-    return reducer(state, action);
+  const [actionType, actionScope] = action.type.split('@')
+  if (state === undefined || actionScope === scope) {
+    return reducer(state, { ...action, type: actionType} );
   }
   return state;
 };

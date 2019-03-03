@@ -12,7 +12,7 @@
 - Document `modules`
 - Document alternate patterns
 
-Redux Scope Utils is a set of functions to promote reusability of _actions_, _reducers_ and _selectors_ in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific part of the state tree, the `scope`.
+Redux Scope Utils is a set of functions to promote reusability of _actions_, _reducers_ and _selectors_ in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific part of the state tree, the [`scope`](docs/scope.md).
 
 ### [`createScopedReducer(reducer, scope)`](docs/createScopedReducer.md)
 
@@ -40,7 +40,7 @@ be constructed by using [combineReducers](https://redux.js.org/api/combinereduce
 }
 ```
 
-To explain the concept of a `scope` we need to build an application state with multiple of the same reducers. Lets start with a simple reducer based off the [counter example](https://redux.js.org/introduction/getting-started#basic-example) from the Redux docs:
+To explain the concept of a [`scope`](docs/scope.md) we need to build an application state with multiple of the same reducers. Lets start with a simple reducer based off the [counter example](https://redux.js.org/introduction/getting-started#basic-example) from the Redux docs:
 
 ```js
 const counterReducer = (state = 0, action) => {
@@ -63,8 +63,8 @@ The next example will use `combineReducers` to add 2 instances of the `counterRe
 
 ```js
 const rootReducer = combineReducers({
-  likes: counter,
-  followers: counter
+  likes: counterReducer,
+  followers: counterReducer
 });
 // Produces an initial state:
 // { likes: 0,  followers: 0 }
@@ -90,8 +90,8 @@ import { createStore, combineReducers } from 'redux';
 import { createScopedReducer } from 'redux-scope-utils';
 
 const rootReducer = combineReducers({
-  likes: createScopedReducer(counter, 'likes'),
-  followers: createScopedReducer(counter, 'followers')
+  likes: createScopedReducer(counterReducer, 'likes'),
+  followers: createScopedReducer(counterReducer, 'followers')
 });
 
 const store = createStore(rootReducer);
@@ -158,7 +158,6 @@ store.dispatch(upvote());
 
 ## Scoped Selectors
 
-(todo: Struggling to explain this)
 
 The final part of this is retrieving data from state. To get data from our scoped reducer, we will use a scoped selector. A selector is a function which takes `state` and returns a subset of the state or derives a new value.
 
@@ -179,6 +178,8 @@ const getLikes = createScopedSelector(getCount, 'likes');
 const getFollowers = createScopedSelector(getCount, 'followers');
 ```
 
+Selectors can be used to 
+
 See [createScopedSelector](docs/createScopedSelector.md) documentation for more examples.
 
 ## Why `meta`?
@@ -190,6 +191,7 @@ The `Flux Standard Actions` [documentation describes `meta`](https://github.com/
 > The optional `meta` property MAY be any type of value. It is intended for any extra information that is not part of the payload.
 
 In our case the "extra information" is our `scope`!
+
 
 ## References
 
