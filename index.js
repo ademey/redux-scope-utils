@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createScopedReducer = exports.createScopedSelector = exports.createScopedAction = exports.getStateSlice = exports.typed = undefined;
+exports.createScopedSelector = exports.createScopedReducer = exports.createScopedAction = exports.scopedReducer = exports.scopedSelector = exports.scopedAction = exports.getStateSlice = exports.typed = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -39,7 +39,7 @@ var getStateSlice = exports.getStateSlice = function getStateSlice(state, scope)
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-var createScopedAction = exports.createScopedAction = function createScopedAction(actionCreator, scope) {
+var scopedAction = exports.scopedAction = function scopedAction(actionCreator, scope) {
   return function () {
     return _extends({}, actionCreator.apply(undefined, arguments), {
       meta: _extends({}, actionCreator.apply(undefined, arguments).meta, { scope: scope })
@@ -54,7 +54,7 @@ var createScopedAction = exports.createScopedAction = function createScopedActio
  * @param {string} scope - State path
  * @return {function} Scoped selector
  */
-var createScopedSelector = exports.createScopedSelector = function createScopedSelector(selector, scope) {
+var scopedSelector = exports.scopedSelector = function scopedSelector(selector, scope) {
   return function (state, props) {
     return selector(getStateSlice(state, scope), props);
   };
@@ -70,7 +70,7 @@ var createScopedSelector = exports.createScopedSelector = function createScopedS
  * @param {string} scope - State path
  * @return {function}
  */
-var createScopedReducer = exports.createScopedReducer = function createScopedReducer(reducer, scope) {
+var scopedReducer = exports.scopedReducer = function scopedReducer(reducer, scope) {
   return function (state, action) {
     if (state === undefined || action.meta && action.meta.scope === scope) {
       return reducer(state, action);
@@ -78,4 +78,8 @@ var createScopedReducer = exports.createScopedReducer = function createScopedRed
     return state;
   };
 };
+
+var createScopedAction = exports.createScopedAction = scopedAction;
+var createScopedReducer = exports.createScopedReducer = scopedReducer;
+var createScopedSelector = exports.createScopedSelector = scopedSelector;
 //# sourceMappingURL=index.js.map
