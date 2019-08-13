@@ -22,7 +22,7 @@ export const getStateSlice = (state, scope) => {
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const createScopedAction = (actionCreator, scope) =>
+export const scopedAction = (actionCreator, scope) =>
   (...args) => ({
     ...actionCreator(...args),
     meta: { ...actionCreator(...args).meta, scope }
@@ -35,7 +35,7 @@ export const createScopedAction = (actionCreator, scope) =>
  * @param {string} scope - State path
  * @return {function} Scoped selector
  */
-export const createScopedSelector = (selector, scope) => (state, props) =>
+export const scopedSelector = (selector, scope) => (state, props) =>
   selector(getStateSlice(state, scope), props);
 
 /**
@@ -48,9 +48,13 @@ export const createScopedSelector = (selector, scope) => (state, props) =>
  * @param {string} scope - State path
  * @return {function}
  */
-export const createScopedReducer = (reducer, scope) => (state, action) => {
+export const scopedReducer = (reducer, scope) => (state, action) => {
   if (state === undefined || (action.meta && action.meta.scope === scope)) {
     return reducer(state, action);
   }
   return state;
 };
+
+export const createScopedAction = scopedAction;
+export const createScopedReducer = scopedReducer;
+export const createScopedSelector = scopedSelector;

@@ -1,4 +1,4 @@
-# createScopedSelector(selector, scope)
+# scopedSelector(selector, scope)
 
 Creates a new [selector](https://github.com/reduxjs/reselect#motivation-for-memoized-selectors) function which is specific to the `scope` part of state.
 
@@ -24,7 +24,7 @@ TODO: semis
 const initialState = {
   open: false,
   data: {}
-}
+};
 
 const modalReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -68,8 +68,8 @@ const getModalData = state => state.data;
 ```
 
 ```js
-import { createScopedSelector } from 'redux-scope-utils'
-import { getModalOpen, getModalData } from 'modules/modal'
+import { scopedSelector } from 'redux-scope-utils';
+import { getModalOpen, getModalData } from 'modules/modal';
 
 
 const exampleState = {
@@ -84,11 +84,11 @@ const exampleState = {
     open: true,
     data: {}
   }
-}
+};
 
 // loginModal specific
-const getLoginModalOpen = createScopedSelector(getModalOpen, 'loginModal')
-const getLoginModalData = createScopedSelector(getModalData, 'loginModal')
+const getLoginModalOpen = scopedSelector(getModalOpen, 'loginModal');
+const getLoginModalData = scopedSelector(getModalData, 'loginModal');
 
 /*
   getLoginModalOpen(exampleState) // false

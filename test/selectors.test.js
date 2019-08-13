@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-import { createScopedSelector } from '../src';
+import { scopedSelector } from '../src';
 
-describe('createScopedSelector', () => {
+describe('scopedSelector', () => {
   const getDate = state => state.date;
 
-  const getDateA = createScopedSelector(getDate, 'a');
-  const getDateB = createScopedSelector(getDate, 'b');
+  const getDateA = scopedSelector(getDate, 'a');
+  const getDateB = scopedSelector(getDate, 'b');
 
   it('Creates a selector relative to scope', () => {
     const state = {

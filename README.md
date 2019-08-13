@@ -14,15 +14,15 @@
 
 Redux Scope Utils is a set of functions to promote reusability of _actions_, _reducers_ and _selectors_ in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific part of the state tree, the [`scope`](docs/scope.md).
 
-### [`createScopedReducer(reducer, scope)`](docs/createScopedReducer.md)
+### [`scopedReducer(reducer, scope)`](docs/createScopedReducer.md)
 
 Only actions with a matching `scope` will be passed to the reducer.
 
-### [`createScopedAction(actionCreator, scope)`](docs/createScopedAction.md)
+### [`scopedAction(actionCreator, scope)`](docs/createScopedAction.md)
 
 Adds `scope` to an action so that it can pass the scoped reducer's test.
 
-### [`createScopedSelector(selector, scope)`](docs/createScopedSelector.md)
+### [`scopedSelector(selector, scope)`](docs/createScopedSelector.md)
 
 Uses `scope` to traverse the state tree. The `selector` should be relative to a the reducer.
 
@@ -35,7 +35,7 @@ be constructed by using [combineReducers](https://redux.js.org/api/combinereduce
 /* The `/` separated path to the reducer is the `scope`
 {
   menu: {
-    order: createScopedReducer(menuReducer, 'menu/order/')
+    order: scopedReducer(menuReducer, 'menu/order/')
   }
 }
 ```
@@ -83,15 +83,15 @@ The goal of this library is redux logic reuse and we will use "scoped" reducers 
 
 When an action is dispatched, the store's `rootReducer` will be called with the current state and the dispatched action. The example `rootReducer` is created with `combineReducers`, which will call each child reducer with the state and the action.
 
-The `createScopedReducer(reducer, scope)` function from this library will act as a gateway to our `counterReducer`. The reducer will only be called if a matching `scope` is included with the action.
+The `scopedReducer(reducer, scope)` function from this library will act as a gateway to our `counterReducer`. The reducer will only be called if a matching `scope` is included with the action.
 
 ```js
 import { createStore, combineReducers } from 'redux';
 import { createScopedReducer } from 'redux-scope-utils';
 
 const rootReducer = combineReducers({
-  likes: createScopedReducer(counterReducer, 'likes'),
-  followers: createScopedReducer(counterReducer, 'followers')
+  likes: scopedReducer(counterReducer, 'likes'),
+  followers: scopedReducer(counterReducer, 'followers')
 });
 
 const store = createStore(rootReducer);
@@ -136,13 +136,13 @@ export const counterReducer = (state = 0, action) => {
 Then for each scoped reducer, you can create matching scoped actions creators. When they are called, they will contain the `scope` information.
 
 ```js
-import { createScopedAction } from 'redux-scope-utils';
+import { scopedAction } from 'redux-scope-utils';
 // Import action creators from your reusable module
 import { incCounter, decCounter } from 'example/counter';
 
 // Creates a new action creator which includes the `scope` of `likes`
-const upvote = createScopedAction(incCounter, 'likes');
-const downvote = createScopedAction(decCounter, 'likes');
+const upvote = scopedAction(incCounter, 'likes');
+const downvote = scopedAction(decCounter, 'likes');
 
 // Somewhere else... dispatch the action with included scope
 import { upvote } from 'store/likes';
@@ -161,26 +161,43 @@ store.dispatch(upvote());
 
 The final part of this is retrieving data from state. To get data from our scoped reducer, we will use a scoped selector. A selector is a function which takes `state` and returns a subset of the state or derives a new value.
 
-The `counterReducer` is so simple it barely needs a selector. It's state is simply a number.
+The `counterReducer` is so simple it barely needs a selector. It's state is simply a number,.
 
 ```js
-// The selector for `counterReducer` is relative to the reducer
 const getCount = state => state;
-
-//...
-
-const exampleState = {
-  likes: 1,
-  followers: 2
-};
-
-const getLikes = createScopedSelector(getCount, 'likes');
-const getFollowers = createScopedSelector(getCount, 'followers');
+// ...
+const getLikes = scopedSelector(getCount, 'likes');
+const getFollowers = scopedSelector(getCount, 'followers');
 ```
 
-Selectors can be used to 
+A reducer with more complex shape will have more complex selectors. For example a 
+reducer for a shopping cart may maintain a list of items in the cart and if it has been submitted.
 
-See [createScopedSelector](docs/createScopedSelector.md) documentation for more examples.
+The selectors for a scoped reducer should be relative to their reducer. The
+`scope` will be used to traverse the state tree to the reducers node and apply
+the selector from there. 
+
+```js
+// Example "cartReducer" state
+// {
+//   submitted: false,
+//   items: [
+//     { name: 'Milk', price: 315 },
+//     { name: 'Cookies', price: 225 }
+//   ]
+// }
+
+const getCartSubmitted = state => state.submitted;
+const getCartItems = state => state.items;
+const getCartTotal = state => getCartItems(state).reduce(
+  (acc, curr) => acc + curr.price,
+  0
+)
+```
+
+
+
+See [scopedSelector](docs/scopedSelector.md) documentation for more examples.
 
 ## Why `meta`?
 

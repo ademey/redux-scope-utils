@@ -1,4 +1,4 @@
-# createScopedReducer(reducer, scope)
+# scopedReducer(reducer, scope)
 
 A helper to manage scoped actions. This utility acts as a gatekeeper. The reducer will only be invoked if the scope matches or when the reducer is initialized with an _undefined_ state. The second case allows the initialState to be applied.
 
@@ -40,11 +40,11 @@ The `valueReducer` can be used many times by scoping it.
 
 ```js
 import { combineReducers } from 'redux';
-import { createScopedReducer } from 'redux-scope-utils';
+import { scopedReducer } from 'redux-scope-utils';
 import { valueReducer } from 'modules/value';
 
 const rootReducer = combineReducers({
-  orderForm: createScopedReducer(valueReducer, 'orderForm'),
-  loginForm: createScopedReducer(valueReducer, 'loginForm')
+  orderForm: scopedReducer(valueReducer, 'orderForm'),
+  loginForm: scopedReducer(valueReducer, 'loginForm')
 });
 ```

@@ -1,14 +1,14 @@
 import { combineReducers } from 'redux'
-import { createScopedAction } from '../src'
+import { scopedAction } from '../src'
 
-describe('createScopedAction', () => {
+describe('scopedAction', () => {
   it('Creates an action creator with a scope', () => {
     const setValue = val => ({
       type: 'SET_VALUE',
       payload: val
     })
 
-    const scopedSetValue = createScopedAction(setValue, 'abc')
+    const scopedSetValue = scopedAction(setValue, 'abc')
 
     expect(scopedSetValue('hello')).toEqual({
       type: 'SET_VALUE',
@@ -24,7 +24,7 @@ describe('createScopedAction', () => {
       meta: { timestamp: 0 }
     })
 
-    const scopedSetValue = createScopedAction(setValue, 'abc')
+    const scopedSetValue = scopedAction(setValue, 'abc')
 
     expect(scopedSetValue('hello')).toEqual({
       type: 'SET_VALUE',

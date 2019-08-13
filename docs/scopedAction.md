@@ -1,4 +1,4 @@
-# createScopedAction(actionCreator, scope)
+# scopedAction(actionCreator, scope)
 
 Creates a new [action creator](https://redux.js.org/glossary#action-creator) which can be used with a scoped reducer.
 
@@ -14,7 +14,7 @@ Creates a new [action creator](https://redux.js.org/glossary#action-creator) whi
 ## Example
 
 ```js
-import { createScopedAction } from 'redux-scope-utils';
+import { scopedAction } from 'redux-scope-utils';
 
 export const SET_VALUE = 'SET_VALUE';
 
@@ -33,7 +33,7 @@ setValue('myKey', 'someValue')
 }
 */
 
-const setFormValue = createScopedAction(setValue, 'myForm');
+const setFormValue = scopedAction(setValue, 'myForm');
 
 /*
 setFormValue('myKey', 'someValue')

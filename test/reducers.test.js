@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import { createScopedReducer } from '../src';
+import { scopedReducer } from '../src';
 
-describe('createScopedReducer', () => {
+describe('scopedReducer', () => {
   const INC = 'inc';
   // Demo reducer which handles one action, and will increase
   // it's count each time.
@@ -14,7 +14,7 @@ describe('createScopedReducer', () => {
     // handled by `b`.
     const reducer = combineReducers({
       a: incReducer,
-      b: createScopedReducer(incReducer, 'b')
+      b: scopedReducer(incReducer, 'b')
     });
 
     // Action has scope `x` which is only handled by `a` reducer
@@ -27,7 +27,7 @@ describe('createScopedReducer', () => {
   });
 
   it('Handles actions with no meta', () => {
-    const reducer = createScopedReducer(incReducer, 'xyz');
+    const reducer = scopedReducer(incReducer, 'xyz');
 
     let state = reducer(1, { type: INC, meta: { scope: 'xyz' } });
     expect(state).toEqual(2);
