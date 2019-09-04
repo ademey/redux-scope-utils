@@ -158,6 +158,7 @@ store.dispatch(upvote());
 
 ## Scoped Selectors
 
+<<<<<<< Updated upstream
 
 The final part of this is retrieving data from state. To get data from our scoped reducer, we will use a scoped selector. A selector is a function which takes `state` and returns a subset of the state or derives a new value.
 
@@ -208,6 +209,10 @@ The `Flux Standard Actions` [documentation describes `meta`](https://github.com/
 > The optional `meta` property MAY be any type of value. It is intended for any extra information that is not part of the payload.
 
 In our case the "extra information" is our `scope`!
+=======
+The final part of this is retrieving data from state. To get data from our scoped reducer, we will
+use a scoped selector.
+>>>>>>> Stashed changes
 
 
 ## References
