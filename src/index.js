@@ -1,5 +1,4 @@
-import * as typed from './typed';
-export { typed };
+import { connect } from 'react-redux';
 
 /**
  * Utility to grab a slice of the state based on the scope
@@ -22,11 +21,10 @@ export const getStateSlice = (state, scope) => {
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const scopedAction = (actionCreator, scope) =>
-  (...args) => ({
-    ...actionCreator(...args),
-    meta: { ...actionCreator(...args).meta, scope }
-  })
+export const scopedAction = (actionCreator, scope) => (...args) => ({
+  ...actionCreator(...args),
+  meta: { ...actionCreator(...args).meta, scope }
+});
 
 /**
  * Create a selector with a predefined scope. This allows generic selectors
@@ -55,6 +53,57 @@ export const scopedReducer = (reducer, scope) => (state, action) => {
   return state;
 };
 
+/**
+ * Create a dispatch function which will apply a scope to all dispatched
+ * action objects.
+ * @param {function} dispatch - Original dispatch
+ * @param {string} scope - State path
+ * @return {function} Modified dispatch function
+ */
+export const scopedDispatch = (dispatch, scope) => action => {
+  // TODO: Should this do an error or something?
+  if (typeof action !== 'object') {
+    dispatch(action);
+  }
+
+  dispatch(scopedAction(() => action, scope)());
+};
+
+/**
+ * Create a `mapStateToProps` function in which the state is scoped.
+ * @param {function} mapFunction - mapStateToProps
+ * @param {string} scope - Path to the undoable instance
+ * @return {function}
+ */
+export const mapStateToScope = scopedSelector;
+
+/**
+ * Create a `mapDispatchToProps` function in which all actions dispatched are
+ * given a scope.
+ *
+ * // TODO: This does not work with thunks!
+ * @param {function} mapFunction - mapDispatchToProps
+ * @param {string} scope - Path to the undoable instance
+ * @return {function}
+ */
+export const mapDispatchToScope = (mapFunction, scope) => (dispatch, props) =>
+  mapFunction(scopedDispatch(dispatch, scope), props);
+
+/**
+ * Connect a component so that it's state is relative to the undoable scope. Anything
+ * dispatched will have the scope and undoableScope applied.
+ * @param {string} scope - Path to the undoable instance
+ * @param {string} [undoableScope] - Property name reducer was assigned to in `undoableReducers`
+ * @return {function}
+ */
+export const scopedConnect = scope => (mstp, mdtp, ...rest) => component =>
+  connect(
+    mapStateToScope(mstp, scope),
+    mapDispatchToScope(mdtp, scope),
+    ...rest
+  )(component);
+
 export const createScopedAction = scopedAction;
 export const createScopedReducer = scopedReducer;
 export const createScopedSelector = scopedSelector;
+export const createScopedDispatch = scopedDispatch;

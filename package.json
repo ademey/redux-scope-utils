@@ -20,6 +20,12 @@
     "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
     "prettier": "^1.15.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.1.1",
     "redux": "^4.0.1"
+  },
+  "peerDependencies": {
+    "react-redux": "^7.1.1"
   }
 }
