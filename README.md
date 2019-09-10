@@ -2,14 +2,8 @@
 
 **Utilities for Redux Scope Patterns**
 
-👷‍Docs Work In Progress!
 
 ✅ TODOS:
-
-- Proof all doc code
-- Proof use of _italics_ and `code`
-- Unit test `modules`
-- Document `modules`
 - Document alternate patterns
 
 Redux Scope Utils is a set of functions to promote reusability of _actions_, _reducers_ and _selectors_ in a `redux` application. They can be wrote in a generic manner, yet used across an application, applying only to a specific part of the state tree, the [`scope`](docs/scope.md).
@@ -29,7 +23,7 @@ Uses `scope` to traverse the state tree. The `selector` should be relative to a 
 ## In Depth
 
 While there are many ways to write reducers, this library assumes your state will
-be constructed by using [combineReducers](https://redux.js.org/api/combinereducers) from the redux package. The `combineReducers` function can be used to create deeply nested application states (_objects_ containing _objects_). At the end of this tree will be a final reducer, and it's path is the `scope`.
+be constructed by using [combineReducers](https://redux.js.org/api/combinereducers) from the redux package. The `combineReducers` function can be used to create deeply nested application states (_objects_ containing _objects_). At the end of each branch will be a final reducer, and it's path is the `scope`.
 
 ```js
 /* The `/` separated path to the reducer is the `scope`
@@ -66,6 +60,8 @@ const rootReducer = combineReducers({
   likes: counterReducer,
   followers: counterReducer
 });
+
+const store = createStore(rootReducer);
 // Produces an initial state:
 // { likes: 0,  followers: 0 }
 // ...
@@ -158,8 +154,6 @@ store.dispatch(upvote());
 
 ## Scoped Selectors
 
-<<<<<<< Updated upstream
-
 The final part of this is retrieving data from state. To get data from our scoped reducer, we will use a scoped selector. A selector is a function which takes `state` and returns a subset of the state or derives a new value.
 
 The `counterReducer` is so simple it barely needs a selector. It's state is simply a number,.
@@ -209,11 +203,6 @@ The `Flux Standard Actions` [documentation describes `meta`](https://github.com/
 > The optional `meta` property MAY be any type of value. It is intended for any extra information that is not part of the payload.
 
 In our case the "extra information" is our `scope`!
-=======
-The final part of this is retrieving data from state. To get data from our scoped reducer, we will
-use a scoped selector.
->>>>>>> Stashed changes
-
 
 ## References
 
