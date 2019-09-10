@@ -1,5 +1,4 @@
-import * as typed from './typed';
-export { typed };
+import { isFSA } from 'flux-standard-action';
 
 /**
  * Utility to grab a slice of the state based on the scope
@@ -17,16 +16,23 @@ export const getStateSlice = (state, scope) => {
  * Creates an action creator with predefined scope. This allows generic
  * action creators to be created for a specific part of state.
  *
- * @param {function} actionCreator - Function which creates an action. The `scope` must
- *                                  be the last param.
+ * @param {function} actionCreator - Function which creates an action or a valid action object
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const scopedAction = (actionCreator, scope) =>
-  (...args) => ({
-    ...actionCreator(...args),
-    meta: { ...actionCreator(...args).meta, scope }
-  })
+export const scopedAction = (actionCreator, scope) => (...args) => {
+  const action =
+    typeof actionCreator === 'function'
+      ? actionCreator(...args)
+      : actionCreator;
+
+  if (!isFSA(action)) return actionCreator;
+
+  return {
+    ...action,
+    meta: { ...action.meta, scope }
+  };
+};
 
 /**
  * Create a selector with a predefined scope. This allows generic selectors
