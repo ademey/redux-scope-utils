@@ -1,9 +1,8 @@
 {
-  "presets": [
-    "env"
-  ],
+  "presets": ["@babel/env"],
   "plugins": [
-    "transform-object-rest-spread",
-    "syntax-dynamic-import"
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-decorators"
   ]
 }
