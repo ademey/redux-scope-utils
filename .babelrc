@@ -3,6 +3,7 @@
   "plugins": [
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-proposal-decorators"
+    ["@babel/proposal-decorators", { "legacy": true }],
+    "@babel/transform-react-jsx"
   ]
 }
