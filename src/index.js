@@ -81,7 +81,6 @@ export const mapStateToScope = scopedSelector;
  * Create a `mapDispatchToProps` function in which all actions dispatched are
  * given a scope.
  *
- * // TODO: This does not work with thunks!
  * @param {function} mapFunction - mapDispatchToProps
  * @param {string} scope - Path to the undoable instance
  * @return {function}
@@ -90,16 +89,15 @@ export const mapDispatchToScope = (mapFunction, scope) => (dispatch, props) =>
   mapFunction(scopedDispatch(dispatch, scope), props);
 
 /**
- * Connect a component so that it's state is relative to the undoable scope. Anything
- * dispatched will have the scope and undoableScope applied.
+ * Connect a component so that it's state is relative to the scope. Anything
+ * dispatched will have the scope applied.
  * @param {string} scope - Path to the undoable instance
- * @param {string} [undoableScope] - Property name reducer was assigned to in `undoableReducers`
  * @return {function}
  */
 export const scopedConnect = scope => (mstp, mdtp, ...rest) => component =>
   connect(
-    mapStateToScope(mstp, scope),
-    mapDispatchToScope(mdtp, scope),
+    mstp ? mapStateToScope(mstp, scope) : undefined,
+    mdtp ? mapDispatchToScope(mdtp, scope) : undefined,
     ...rest
   )(component);
 

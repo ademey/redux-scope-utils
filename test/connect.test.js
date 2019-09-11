@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { Provider as ProviderMock, connect } from 'react-redux';
+import { scopedConnect } from '../src';
 import * as rtl from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
@@ -65,9 +66,12 @@ describe('React', () => {
 
     describe('Core subscription and prop passing behavior', () => {
       it('should receive the store state in the context', () => {
-        const store = createStore(() => ({ hi: 'there' }));
+        const store = createStore(() => ({
+          en: { greet: 'Hello' },
+          fr: { greet: 'Salut' }
+        }));
 
-        @connect(state => state)
+        @(scopedConnect('en')(state => state))
         class Container extends Component {
           render() {
             return <Passthrough {...this.props} />;
@@ -80,20 +84,19 @@ describe('React', () => {
           </ProviderMock>
         );
 
-        expect(tester.getByTestId('hi')).toHaveTextContent('there');
+        expect(tester.getByTestId('greet')).toHaveTextContent('Hello');
       });
 
       it('should pass state and props to the given component', () => {
         const store = createStore(() => ({
-          foo: 'bar',
-          baz: 42,
-          hello: 'world'
+          scoped: {
+            foo: 'bar',
+            baz: 42,
+            hello: 'world'
+          }
         }));
 
-        @connect(
-          ({ foo, baz }) => ({ foo, baz }),
-          {}
-        )
+        @(scopedConnect('scoped')(({ foo, baz }) => ({ foo, baz }), {}))
         class Container extends Component {
           render() {
             return <Passthrough {...this.props} />;
@@ -110,92 +113,6 @@ describe('React', () => {
         expect(tester.getByTestId('foo')).toHaveTextContent('bar');
         expect(tester.getByTestId('baz')).toHaveTextContent('42');
         expect(tester.queryByTestId('hello')).toBe(null);
-      });
-
-      it('should subscribe class components to the store changes', () => {
-        const store = createStore(stringBuilder);
-
-        @connect(state => ({ string: state }))
-        class Container extends Component {
-          render() {
-            return <Passthrough {...this.props} />;
-          }
-        }
-
-        const tester = rtl.render(
-          <ProviderMock store={store}>
-            <Container />
-          </ProviderMock>
-        );
-        expect(tester.getByTestId('string')).toHaveTextContent('');
-
-        rtl.act(() => {
-          store.dispatch({ type: 'APPEND', body: 'a' });
-        });
-        expect(tester.getByTestId('string')).toHaveTextContent('a');
-
-        rtl.act(() => {
-          store.dispatch({ type: 'APPEND', body: 'b' });
-        });
-        expect(tester.getByTestId('string')).toHaveTextContent('ab');
-      });
-
-      it('should subscribe pure function components to the store changes', () => {
-        const store = createStore(stringBuilder);
-
-        const Container = connect(state => ({ string: state }))(
-          function Container(props) {
-            return <Passthrough {...props} />;
-          }
-        );
-
-        const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-        const tester = rtl.render(
-          <ProviderMock store={store}>
-            <Container />
-          </ProviderMock>
-        );
-        expect(spy).toHaveBeenCalledTimes(0);
-        spy.mockRestore();
-
-        expect(tester.getByTestId('string')).toHaveTextContent('');
-        rtl.act(() => {
-          store.dispatch({ type: 'APPEND', body: 'a' });
-        });
-
-        expect(tester.getByTestId('string')).toHaveTextContent('a');
-        rtl.act(() => {
-          store.dispatch({ type: 'APPEND', body: 'b' });
-        });
-
-        expect(tester.getByTestId('string')).toHaveTextContent('ab');
-      });
-
-      it("should retain the store's context", () => {
-        const store = new ContextBoundStore(stringBuilder);
-
-        let Container = connect(state => ({ string: state }))(
-          function Container(props) {
-            return <Passthrough {...props} />;
-          }
-        );
-
-        const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-        const tester = rtl.render(
-          <ProviderMock store={store}>
-            <Container />
-          </ProviderMock>
-        );
-        expect(spy).toHaveBeenCalledTimes(0);
-        spy.mockRestore();
-
-        expect(tester.getByTestId('string')).toHaveTextContent('');
-        rtl.act(() => {
-          store.dispatch({ type: 'APPEND', body: 'a' });
-        });
-
-        expect(tester.getByTestId('string')).toHaveTextContent('a');
       });
 
       it('should throw an error if the store is not in the props or context', () => {
