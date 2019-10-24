@@ -72,18 +72,33 @@ export const scopedDispatch = (dispatch, scope) => action => {
 /**
  * Create a `mapStateToProps` function in which the state is scoped.
  * @param {function} mapFunction - mapStateToProps
- * @param {string} scope - Path to the undoable instance
+ * @param {string} scope
  * @return {function}
  */
-export const mapStateToScope = scopedSelector;
+export const mapStateToScope = (mstp, scope) => {
+  if (typeof mstp === 'function') return scopedSelector(mstp, scope);
+
+  if (typeof mstp === 'object') return (state, props) =>
+    Object.entries(mstp).reduce((acc, curr) => {
+      const [key, val] = curr;
+      const scopedVal = (typeof val === 'function') ? scopedSelector(val, scope) : mstp
+      return {
+        ...acc,
+        [key]: scopedVal
+      }
+    }, {})
+
+  return mstp;
+}
+
+// scopedSelector;
 
 /**
  * Create a `mapDispatchToProps` function in which all actions dispatched are
  * given a scope.
  *
  * @param {function} mapFunction - mapDispatchToProps
- * @param {string} scope - Path to the undoable instance
- * @return {function}
+ * @param {string} scope
  */
 export const mapDispatchToScope = (mapFunction, scope) => (dispatch, props) =>
   mapFunction(scopedDispatch(dispatch, scope), props);
@@ -91,7 +106,7 @@ export const mapDispatchToScope = (mapFunction, scope) => (dispatch, props) =>
 /**
  * Connect a component so that it's state is relative to the scope. Anything
  * dispatched will have the scope applied.
- * @param {string} scope - Path to the undoable instance
+ * @param {string} scope
  * @return {function}
  */
 export const scopedConnect = scope => (mstp, mdtp, ...rest) => component =>
