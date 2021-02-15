@@ -6,20 +6,34 @@
   "author": "Anne Demey",
   "license": "MIT",
   "scripts": {
-    "build": "babel src -s -D -d ./ --presets env",
+    "build": "babel src -s -D -d ./ --presets=@babel/preset-env",
     "test": "jest --verbose",
     "test:watch": "jest --watch",
     "prettier": "prettier --write \"{lib, src, scripts, bin}/**/*.js\""
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "jest": "^23.6.0",
-    "prettier": "^1.15.2",
-    "redux": "^4.0.1"
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-env": "^7.6.0",
+    "@testing-library/jest-dom": "^4.1.0",
+    "@testing-library/react": "^9.1.4",
+    "@testing-library/react-hooks": "^2.0.1",
+    "babel-plugin-dynamic-import-node": "^2.3.0",
+    "create-react-class": "^15.6.3",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.1.1",
+    "react-test-renderer": "^16.9.0",
+    "redux": "^4.0.4"
+  },
+  "peerDependencies": {
+    "react-redux": "^7.1.1",
+    "redux": "^2.0.0 || ^3.0.0 || ^4.0.0-0"
   }
 }

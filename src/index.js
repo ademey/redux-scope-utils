@@ -1,5 +1,4 @@
-import * as typed from './typed';
-export { typed };
+import { connect } from 'react-redux';
 
 /**
  * Utility to grab a slice of the state based on the scope
@@ -22,11 +21,10 @@ export const getStateSlice = (state, scope) => {
  * @param {string} scope - State path
  * @return {function} Scoped action creator
  */
-export const scopedAction = (actionCreator, scope) =>
-  (...args) => ({
-    ...actionCreator(...args),
-    meta: { ...actionCreator(...args).meta, scope }
-  })
+export const scopedAction = (actionCreator, scope) => (...args) => ({
+  ...actionCreator(...args),
+  meta: { ...actionCreator(...args).meta, scope }
+});
 
 /**
  * Create a selector with a predefined scope. This allows generic selectors
@@ -55,6 +53,70 @@ export const scopedReducer = (reducer, scope) => (state, action) => {
   return state;
 };
 
+/**
+ * Create a dispatch function which will apply a scope to all dispatched
+ * action objects.
+ * @param {function} dispatch - Original dispatch
+ * @param {string} scope - State path
+ * @return {function} Modified dispatch function
+ */
+export const scopedDispatch = (dispatch, scope) => action => {
+  // TODO: Should this do an error or something?
+  if (typeof action !== 'object') {
+    dispatch(action);
+  }
+
+  dispatch(scopedAction(() => action, scope)());
+};
+
+/**
+ * Create a `mapStateToProps` function in which the state is scoped.
+ * @param {function} mapFunction - mapStateToProps
+ * @param {string} scope
+ * @return {function}
+ */
+export const mapStateToScope = (mstp, scope) => {
+  if (typeof mstp === 'function') return scopedSelector(mstp, scope);
+
+  if (typeof mstp === 'object') return (state, props) =>
+    Object.entries(mstp).reduce((acc, curr) => {
+      const [key, val] = curr;
+      const scopedVal = (typeof val === 'function') ? scopedSelector(val, scope) : mstp
+      return {
+        ...acc,
+        [key]: scopedVal
+      }
+    }, {})
+
+  return mstp;
+}
+
+// scopedSelector;
+
+/**
+ * Create a `mapDispatchToProps` function in which all actions dispatched are
+ * given a scope.
+ *
+ * @param {function} mapFunction - mapDispatchToProps
+ * @param {string} scope
+ */
+export const mapDispatchToScope = (mapFunction, scope) => (dispatch, props) =>
+  mapFunction(scopedDispatch(dispatch, scope), props);
+
+/**
+ * Connect a component so that it's state is relative to the scope. Anything
+ * dispatched will have the scope applied.
+ * @param {string} scope
+ * @return {function}
+ */
+export const scopedConnect = scope => (mstp, mdtp, ...rest) => component =>
+  connect(
+    mstp ? mapStateToScope(mstp, scope) : undefined,
+    mdtp ? mapDispatchToScope(mdtp, scope) : undefined,
+    ...rest
+  )(component);
+
 export const createScopedAction = scopedAction;
 export const createScopedReducer = scopedReducer;
 export const createScopedSelector = scopedSelector;
+export const createScopedDispatch = scopedDispatch;
